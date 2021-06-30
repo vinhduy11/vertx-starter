@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} | %highlight{%5p}{TRACE=blue, DEBUG=blue, INFO=green, WARN=yellow, ERROR=red, FATAL=red} | [%style{%t}{magenta}] [%method]- %highlight{%m%n%throwable}{TRACE=blue, DEBUG=blue, INFO=white, WARN=yellow, ERROR=red, FATAL=red}" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO" additivity="false">
+            <AppenderRef ref="console" />
+        </Root>
+    </Loggers>
+</Configuration>

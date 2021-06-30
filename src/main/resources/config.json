@@ -1,0 +1,18 @@
+{
+  "http": {
+    "port": 8080
+  },
+  "rabbitmq": {
+    "host": "172.16.9.166",
+    "port": 5672,
+    "username": "test",
+    "password": "test",
+    "connection_timeout": 70
+  },
+  "oracle_pri": {
+    "jdbcUrl": "172.16.9.166",
+    "username": "operator_prod",
+    "password": "1234567",
+    "maximumPoolSize": 50
+  }
+}
