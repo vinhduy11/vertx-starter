@@ -3,7 +3,7 @@
     "port": 8080
   },
   "rabbitmq": {
-    "host": "172.16.9.166",
+    "host": "127.0.0.1",
     "port": 5672,
     "username": "test",
     "password": "test",

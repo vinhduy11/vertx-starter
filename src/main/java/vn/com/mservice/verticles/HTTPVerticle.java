@@ -40,8 +40,10 @@ public class HTTPVerticle extends AbstractVerticle {
 
         JsonObject httpObj = loadedConfig.getJsonObject("http");
         int httpPort = httpObj.getInteger("port");
-        LOGGER.info(httpPort);
-        return Future.future(promise -> server.listen(httpPort));
+        return Future.future(promise -> {
+            LOGGER.info("HTTP Start on port "+ httpPort);
+            server.listen(httpPort);
+        });
     }
 
     void doWelcome(RoutingContext ctx) {
