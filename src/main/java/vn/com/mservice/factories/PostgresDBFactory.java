@@ -9,25 +9,21 @@ import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
-import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.Tuple;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-public class OracleDBFactory {
-    private static  OracleDBFactory instance = null;
+public class PostgresDBFactory {
+    private static PostgresDBFactory instance = null;
     private static JsonObject loadedConfig = new JsonObject();
-    private static Logger LOGGER = LoggingFactory.getInstance(OracleDBFactory.class.getName());
+    private static Logger LOGGER = LoggingFactory.getInstance(PostgresDBFactory.class.getName());
     private static SQLClient primaryClient = null;
     private static SQLClient standbyClient = null;
-    public OracleDBFactory(){
+    public PostgresDBFactory(Vertx vertx){
         loadedConfig.mergeIn(Vertx.currentContext().config());
-        createHikariCPPrimaryPool();
-        createHikariCPStandbyPool();
+        createHikariCPPrimaryPool(vertx);
+        createHikariCPStandbyPool(vertx);
     }
-    public static OracleDBFactory getInstance(){
+    public static PostgresDBFactory getInstance(Vertx vertx){
         if (instance == null)
-            instance = new OracleDBFactory();
+            instance = new PostgresDBFactory(vertx);
 
         return instance;
     }
@@ -47,11 +43,11 @@ public class OracleDBFactory {
 //        primaryClient = JDBCClient.createShared(Vertx.vertx(), config);
 //    }
 
-    public void createHikariCPPrimaryPool(){
-        JsonObject configObj = loadedConfig.getJsonObject("oracle_pri");
+    public void createHikariCPPrimaryPool(Vertx vertx){
+        JsonObject configObj = loadedConfig.getJsonObject("postgres_pri");
         JsonObject config = new JsonObject()
             .put("provider_class", "io.vertx.ext.jdbc.spi.impl.HikariCPDataSourceProvider")
-            .put("driverClassName", "oracle.jdbc.OracleDriver")
+            .put("driverClassName", "org.postgresql.ds.PGSimpleDataSource")
             .put("jdbcUrl", configObj.getString("jdbcUrl"))
             .put("username", configObj.getString("username"))
             .put("password", configObj.getString("password"))
@@ -68,14 +64,15 @@ public class OracleDBFactory {
             .put("elideSetAutoCommits", true)
             .put("maintainTimeStats", false);
 
-        standbyClient = JDBCClient.createShared(Vertx.vertx(), config);
+        standbyClient = JDBCClient.createShared(vertx, config);
+
     }
 
-    public void createHikariCPStandbyPool(){
-        JsonObject configObj = loadedConfig.getJsonObject("oracle_pri");
+    public void createHikariCPStandbyPool(Vertx vertx){
+        JsonObject configObj = loadedConfig.getJsonObject("postgres_pri");
         JsonObject config = new JsonObject()
                 .put("provider_class", "io.vertx.ext.jdbc.spi.impl.HikariCPDataSourceProvider")
-                .put("driverClassName", "oracle.jdbc.OracleDriver")
+                .put("driverClassName", "org.postgresql.Driver")
                 .put("jdbcUrl", configObj.getString("jdbcUrl"))
                 .put("username", configObj.getString("username"))
                 .put("password", configObj.getString("password"))
@@ -92,29 +89,29 @@ public class OracleDBFactory {
                 .put("elideSetAutoCommits", true)
                 .put("maintainTimeStats", false);
 
-        standbyClient = JDBCClient.createShared(Vertx.vertx(), config);
+        standbyClient = JDBCClient.createShared(vertx, config);
     }
 
     public Future<ResultSet> selectQueryWithParams(String sql, JsonArray params) {
         return Future.future(promise ->
-                standbyClient.getConnection(res -> {
-                    if (res.succeeded()) {
-                        LOGGER.info("Get Connection Success");
-                        SQLConnection connection = res.result();
-                        connection.queryWithParams(sql, params, res2 -> {
-                            if (res2.succeeded()) {
-                                LOGGER.info("Query Done");
-                                ResultSet rs = res2.result();
-                                // Do something with results
-                                promise.complete(rs);
-                            } else {
-                                LOGGER.error(res2.cause().getMessage());
-                            }
-                        });
+        standbyClient.getConnection(res -> {
+            if (res.succeeded()) {
+                LOGGER.info("Get Connection Success");
+                SQLConnection connection = res.result();
+                connection.queryWithParams(sql, params, res2 -> {
+                    if (res2.succeeded()) {
+                        LOGGER.info("Query Done");
+                        ResultSet rs = res2.result();
+                        // Do something with results
+                        promise.complete(rs);
                     } else {
-                        LOGGER.error(res.cause().getMessage());
+                        LOGGER.error(res2.cause().getMessage());
                     }
-                }));
+                });
+            } else {
+                LOGGER.error(res.cause().getMessage());
+            }
+        }));
     }
 
     public Future<ResultSet> selectQuery(String sql) {

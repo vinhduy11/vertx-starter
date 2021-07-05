@@ -32,10 +32,11 @@ public class MainVerticle extends AbstractVerticle {
         final DeploymentOptions unblocking_opts = new DeploymentOptions().setWorker(false).setConfig(config);
         final DeploymentOptions blocking_opts = new DeploymentOptions().setWorker(true).setInstances(8).setConfig(config);
         Future<String> httpVerticle = Future.future(promise -> vertx.deployVerticle(new HTTPVerticle().getClass().getName(), unblocking_opts, promise));
+        Future<String> dbVerticle = Future.future(promise -> vertx.deployVerticle(new DBVerticle().getClass().getName(), unblocking_opts, promise));
         Future<String> helloVerticle = Future.future(promise -> vertx.deployVerticle(new HelloVerticle().getClass().getName(), unblocking_opts, promise));
         Future<String> smsReceiverVerticle = Future.future(promise -> vertx.deployVerticle(new SMSReceiverVerticle().getClass().getName(), unblocking_opts, promise));
 
-        return CompositeFuture.all(httpVerticle, helloVerticle, smsReceiverVerticle).mapEmpty();
+        return CompositeFuture.all(httpVerticle, dbVerticle, helloVerticle, smsReceiverVerticle).mapEmpty();
     }
 
 }

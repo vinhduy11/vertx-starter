@@ -11,8 +11,7 @@ import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import vn.com.mservice.factories.LoggingFactory;
-import vn.com.mservice.factories.OracleDBFactory;
-import vn.com.mservice.factories.RabbitFactory;
+import vn.com.mservice.factories.PostgresDBFactory;
 
 import java.util.List;
 
@@ -47,9 +46,12 @@ public class HTTPVerticle extends AbstractVerticle {
     }
 
     void doWelcome(RoutingContext ctx) {
+
+
         ctx.response()
                 .putHeader("content-type", "text/plain")
                 .end("Start thanh cong roi ne mung qua");
+
     }
 
     void doHello(RoutingContext ctx) {

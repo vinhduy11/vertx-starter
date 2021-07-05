@@ -2,27 +2,18 @@ package vn.com.mservice.verticles;
 
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import io.vertx.core.logging.Logger;
-import io.vertx.ext.sql.ResultSet;
 import io.vertx.rabbitmq.RabbitMQClient;
 import io.vertx.rabbitmq.RabbitMQConsumer;
 import io.vertx.rabbitmq.RabbitMQMessage;
 import io.vertx.rabbitmq.RabbitMQOptions;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.Tuple;
 import vn.com.mservice.factories.LoggingFactory;
-import vn.com.mservice.factories.OracleDBFactory;
 import vn.com.mservice.factories.RabbitFactory;
-
-import java.util.List;
 
 
 public class SMSReceiverVerticle extends AbstractVerticle {
@@ -80,22 +71,6 @@ public class SMSReceiverVerticle extends AbstractVerticle {
     }
 
     void handlerMsg(RabbitMQMessage message){
-        OracleDBFactory oracleDBFactory = OracleDBFactory.getInstance();
-        String sql = "SELECT * FROM VH_SMSC_TEMPLATES WHERE TEMPLATE_NAME = ?";
-        JsonArray params = new JsonArray();
-        params.add("SMS_OPC_FPTSHOP_2");
-        Future<ResultSet> future = oracleDBFactory.selectQuery(sql, params);
-
-        future.onSuccess(resultSet -> {
-            List<JsonObject> rows = resultSet.getRows();
-
-            for (JsonObject row : rows) {
-
-                String id = row.getString("TEMPLATE_NAME");
-                LOGGER.info(id);
-            }
-        });
-
         LOGGER.info("Got message: " + message.body().toString());
     }
 }

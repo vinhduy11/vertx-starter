@@ -1,6 +1,6 @@
 {
   "http": {
-    "port": 8080
+    "port": 9999
   },
   "rabbitmq": {
     "host": "127.0.0.1",
@@ -10,8 +10,16 @@
     "connection_timeout": 70
   },
   "oracle_pri": {
-    "jdbcUrl": "172.16.9.166",
+    "jdbcUrl": "127.0.0.1",
     "username": "operator_prod",
+    "password": "1234567",
+    "maximumPoolSize": 50
+  },
+  "postgres_pri": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dbname": "lab",
+    "username": "vanhanh",
     "password": "1234567",
     "maximumPoolSize": 50
   }

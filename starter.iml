@@ -39,6 +39,7 @@
     <orderEntry type="library" name="Maven: com.mchange:mchange-commons-java:0.2.15" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:4.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.oracle.database.jdbc:ojdbc10:19.11.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.postgresql:postgresql:42.2.11" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.14.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.14.0" level="project" />
   </component>
